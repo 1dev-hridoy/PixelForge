@@ -22,7 +22,13 @@ router.post('/login', (req, res) => {
 
     if (email === process.env.ADMINEMAIL && password === process.env.ADMINPASSWORD) {
         req.session.isAdmin = true;
-        res.redirect('/admin');
+        req.session.save(err => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).send('Error saving session');
+            }
+            res.redirect('/admin');
+        });
     } else {
         res.render('auth/adminLogin', { error: 'Invalid credentials' });
     }

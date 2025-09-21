@@ -38,7 +38,6 @@ if (process.env.VERCEL !== '1') {
 
 
 app.use(cors());
-app.use(cors());
 app.use(cookieParser());
 
 const session = require('express-session');
