@@ -2,36 +2,16 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.js",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/app.js"
-    },
-    {
-      "src": "/admin/(.*)",
-      "dest": "/app.js"
-    },
-    {
-      "src": "/api/cron/(.*)",
-      "dest": "/app.js"
-    },
-    {
-      "src": "/auth/(.*)",
-      "dest": "/app.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/app.js"
+      "dest": "server.js"
     }
   ],
-  "env": {
-    "NODE_ENV": "production",
-    "VERCEL": "1"
-  },
   "crons": [
     {
       "path": "/api/cron/reset-daily-limits",
