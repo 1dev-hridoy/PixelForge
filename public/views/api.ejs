@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= settings.service.name %> API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['Ubuntu Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for fixed sidebar */
+        .sidebar-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 16rem;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        
+        .main-content {
+            margin-left: 16rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            
+            .sidebar-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-mono text-gray-800 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-20">
+        <div class="max-w-full px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-lg">
+                    <%= settings.service.name.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-black"><%= settings.service.name %></h1>
+                    <p class="text-xs text-gray-500"><%= settings.service.slogan %></p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="mobileMenuToggle" class="md:hidden p-2 hover:bg-gray-100 rounded">
+                    <span class="material-icons">menu</span>
+                </button>
+                <button id="sidebarToggle" class="hidden md:block p-2 hover:bg-gray-100 rounded">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="px-6 py-4 space-y-3">
+                <% settings.buttons.forEach(button => { %>
+                    <a href="<%= button.url %>" class="block text-gray-800 hover:text-gray-600"><%= button.name %></a>
+                <% }); %>
+                <div class="pt-3 border-t border-gray-200">
+                    <h3 class="font-bold mb-2">Categories</h3>
+                    <div class="space-y-2">
+                        <div class="cursor-pointer hover:bg-gray-50 p-2 rounded" onclick="selectCategory('ai')">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">AI</span>
+                                <span class="text-xs bg-gray-200 px-2 py-1 rounded">54</span>
+                            </div>
+                        </div>
+                        <div class="cursor-pointer hover:bg-gray-50 p-2 rounded" onclick="selectCategory('canvas')">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Canvas</span>
+                                <span class="text-xs bg-gray-200 px-2 py-1 rounded">5</span>
+                            </div>
+                        </div>
+                        <div class="cursor-pointer hover:bg-gray-50 p-2 rounded" onclick="selectCategory('discovery')">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Discovery</span>
+                                <span class="text-xs bg-gray-200 px-2 py-1 rounded">33</span>
+                            </div>
+                        </div>
+                        <div class="cursor-pointer hover:bg-gray-50 p-2 rounded" onclick="selectCategory('downloader')">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Downloader</span>
+                                <span class="text-xs bg-gray-200 px-2 py-1 rounded">23</span>
+                            </div>
+                        </div>
+                        <div class="cursor-pointer hover:bg-gray-50 p-2 rounded" onclick="selectCategory('random')">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Random</span>
+                                <span class="text-xs bg-gray-200 px-2 py-1 rounded">54</span>
+                            </div>
+                        </div>
+                        <div class="cursor-pointer hover:bg-gray-50 p-2 rounded" onclick="selectCategory('tools')">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Tools</span>
+                                <span class="text-xs bg-gray-200 px-2 py-1 rounded">15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Fixed Sidebar -->
+    <aside id="sidebar" class="sidebar-fixed bg-white border-r border-gray-200 pt-16 hidden md:block">
+        <div class="p-4">
+            <div class="bg-gray-50 border border-gray-300 rounded p-4 mb-4">
+                <h3 class="font-bold mb-3">Server</h3>
+                <div class="text-sm text-gray-600 font-mono break-all">
+                    <%= settings.service.serverURI %>
+                </div>
+            </div>
+            
+            <div id="sidebar-categories" class="bg-gray-50 border border-gray-300 rounded p-4">
+                <h3 class="font-bold mb-3">Categories</h3>
+                <div class="space-y-2">
+                    <!-- Categories will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content pt-16">
+        <div class="p-6">
+            <!-- API Documentation Header -->
+            <div class="bg-white border border-gray-300 rounded p-6 mb-6">
+                <div class="text-center mb-4">
+                    <div class="w-16 h-16 bg-black text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4">
+                        <%= settings.service.name.charAt(0).toUpperCase() %>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4"><%= settings.service.headDoc %></h2>
+                    <div class="mt-4 space-x-4">
+                        <% settings.buttons.forEach(button => { %>
+                            <a href="<%= button.url %>" target="_blank" class="text-blue-600 hover:underline"><%= button.name %></a>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Server URL for mobile devices -->
+            <div class="md:hidden mb-4 bg-white border border-gray-300 rounded p-4">
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-gray-500">dns</span>
+                    <span class="font-bold text-sm">Server:</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-600 font-mono break-all">
+                    <%= settings.service.serverURI %>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="mb-6">
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-3 text-gray-400">search</span>
+                    <input type="text" id="searchInput" placeholder="Search API endpoints..." 
+                           class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Selected Category Content -->
+            <div id="category-content-container" class="bg-white border border-gray-300 rounded">
+                <!-- Endpoints will be dynamically inserted here -->
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-12 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
+                <p>Thx To All users And contributors.</p>
+                <p>© <%= settings.service.name %> API. | All Rights Reserved.</p>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        const apis = <%- JSON.stringify(apis) %>;
+        const serverURI = "<%= settings.service.serverURI %>";
+
+        function renderCategories() {
+            const categories = {};
+            apis.forEach(api => {
+                if (!categories[api.meta.category]) {
+                    categories[api.meta.category] = 0;
+                }
+                categories[api.meta.category]++;
+            });
+
+            const categoryContainer = document.querySelector("#sidebar-categories .space-y-2");
+            const mobileCategoryContainer = document.querySelector("#mobileMenu .space-y-2");
+            categoryContainer.innerHTML = ''; 
+            mobileCategoryContainer.innerHTML = ''; 
+
+            for (const category in categories) {
+                const count = categories[category];
+                const categoryHtml = `
+                    <div class="cursor-pointer hover:bg-gray-100 p-2 rounded" onclick="renderEndpoints('${category}')">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-sm">${category}</span>
+                            <span class="text-xs bg-gray-200 px-2 py-1 rounded">${count}</span>
+                        </div>
+                    </div>
+                `;
+                categoryContainer.innerHTML += categoryHtml;
+                mobileCategoryContainer.innerHTML += categoryHtml;
+            }
+        }
+
+        function renderEndpoints(category, filter = '') {
+            const container = document.getElementById("category-content-container");
+            container.innerHTML = '';
+
+            const filteredApis = apis.filter(api => 
+                api.meta.category === category && 
+                (api.meta.name.toLowerCase().includes(filter.toLowerCase()) || api.meta.path.toLowerCase().includes(filter.toLowerCase()))
+            );
+
+            if (filteredApis.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-gray-500">No endpoints found in this category.</div>`;
+                return;
+            }
+
+            let contentHtml = `<div id="${category}-content" class="p-4"><h2 class="text-xl font-bold mb-4">${category} Endpoints</h2>`;
+
+            filteredApis.forEach(api => {
+                const endpointId = api.meta.path.replace(/\//g, '-');
+                contentHtml += `
+                    <div class="mb-6 border border-gray-200 rounded">
+                        <div class="p-4 bg-gray-50 border-b border-gray-200 cursor-pointer" onclick="toggleEndpoint('${endpointId}')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">${api.meta.method.toUpperCase()}</span>
+                                    <span class="font-mono font-bold">${api.meta.path}</span>
+                                    <span class="text-gray-500 text-sm">${api.meta.name}</span>
+                                </div>
+                                <span class="material-icons text-gray-400" id="${endpointId}-toggle-icon">expand_more</span>
+                            </div>
+                        </div>
+                        <div id="${endpointId}-inputs" class="hidden p-4 bg-gray-50">
+                            ${renderEndpointInputs(api)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentHtml += `</div>`;
+            container.innerHTML = contentHtml;
+        }
+
+        function renderEndpointInputs(api) {
+            let inputsHtml = '';
+            for (const param in api.meta.params) {
+                const isRequired = api.meta.params[param] === 'required';
+                inputsHtml += `
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-2">${param} ${isRequired ? '*' : ''}</label>
+                        <input type="text" id="${api.meta.path}-${param}" class="w-full p-3 border border-gray-300 rounded bg-white font-mono text-sm">
+                    </div>
+                `;
+            }
+         
+            inputsHtml += `
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2">API Key *</label>
+                    <input type="text" id="${api.meta.path}-apiKey" class="w-full p-3 border border-gray-300 rounded bg-white font-mono text-sm">
+                </div>
+            `;
+
+            inputsHtml += `
+                <div class="flex space-x-3 mb-4">
+                    <button onclick="executeEndpoint('${api.meta.path}')" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition-colors">Execute</button>
+                    <button onclick="clearEndpoint('${api.meta.path}')" class="text-gray-600 hover:text-gray-800">Clear</button>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <span class="material-icons text-sm">keyboard_arrow_down</span>
+                        <span class="font-bold text-sm">RESPONSE</span>
+                    </div>
+                    <div id="${api.meta.path}-response" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm min-h-[100px]">
+                        <div class="text-gray-400">Ready to execute...</div>
+                    </div>
+                </div>
+            `;
+            return inputsHtml;
+        }
+
+        async function executeEndpoint(path) {
+            const api = apis.find(a => a.meta.path === path);
+            const responseContainer = document.getElementById(`${path}-response`);
+            responseContainer.innerHTML = '<div class="text-gray-400">Loading...</div>';
+
+            const params = {};
+            let allRequiredFilled = true;
+            for (const paramName in api.meta.params) {
+                const input = document.getElementById(`${path}-${paramName}`);
+                if (api.meta.params[paramName] === 'required' && !input.value) {
+                    allRequiredFilled = false;
+                }
+                params[paramName] = input.value;
+            }
+
+            const apiKey = document.getElementById(`${path}-apiKey`).value;
+            if (!apiKey) {
+                allRequiredFilled = false;
+            }
+
+            if (!allRequiredFilled) {
+                responseContainer.innerHTML = '<div class="text-red-400">Please fill all required fields.</div>';
+                return;
+            }
+
+            let url = `${serverURI}/api${path}`;
+            const options = {
+                method: api.meta.method.toUpperCase(),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            if (options.method === 'GET') {
+                const query = new URLSearchParams(params);
+                query.append('key', apiKey);
+                url += `?${query.toString()}`;
+            } else {
+                options.body = JSON.stringify({ ...params, key: apiKey });
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                responseContainer.innerHTML = `
+                    <div class="text-gray-400 mb-2">Method: ${options.method}</div>
+                    <div class="text-gray-400 mb-2">URL: ${url}</div>
+                    <div class="text-gray-400 mb-4">Response</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                responseContainer.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
+            }
+        }
+
+        function clearEndpoint(path) {
+            const api = apis.find(a => a.meta.path === path);
+            for (const paramName in api.meta.params) {
+                document.getElementById(`${path}-${paramName}`).value = '';
+            }
+            document.getElementById(`${path}-apiKey`).value = '';
+            document.getElementById(`${path}-response`).innerHTML = '<div class="text-gray-400">Ready to execute...</div>';
+        }
+
+        function toggleEndpoint(endpointId) {
+            const inputs = document.getElementById(endpointId + '-inputs');
+            const icon = document.getElementById(endpointId + '-toggle-icon');
+            inputs.classList.toggle('hidden');
+            icon.textContent = inputs.classList.contains('hidden') ? 'expand_more' : 'expand_less';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+         
+            const firstCategory = Object.keys(apis.reduce((acc, api) => { acc[api.meta.category] = true; return acc; }, {}))[0];
+            if (firstCategory) {
+                renderEndpoints(firstCategory);
+            }
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keyup', () => {
+                const filter = searchInput.value;
+                const currentCategory = document.querySelector('#sidebar-categories .bg-gray-100')?.innerText.split('\n')[0] || firstCategory;
+                renderEndpoints(currentCategory, filter);
+            });
+        });
+
+    
+        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+     
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+            const mainContent = document.querySelector('.main-content');
+            mainContent.style.marginLeft = sidebar.classList.contains('hidden') ? '0' : '16rem';
+        });
+    </script>
+</body>
+</html>

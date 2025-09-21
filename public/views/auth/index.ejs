@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth - PixelForge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { 'mono': ['Ubuntu Mono', 'monospace'] } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-mono text-gray-800 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b fixed top-0 left-0 right-0 z-20">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-lg">P</div>
+                <div>
+                    <h1 class="text-lg font-bold text-black">PixelForge</h1>
+                    <p class="text-xs text-gray-500">crafting digital experiences</p>
+                </div>
+            </div>
+            <div class="flex space-x-4">
+                <a href="/" class="text-blue-600 hover:underline">Home</a>
+                <a href="/doc" class="text-blue-600 hover:underline">API Docs</a>
+                <a href="/profile" class="text-blue-600 hover:underline">Profile</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20 max-w-md mx-auto mt-8">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-black text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4">P</div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Welcome to PixelForge</h1>
+                <p class="text-gray-600">Sign up to access our powerful APIs</p>
+            </div>
+
+            <!-- Auth Form -->
+            <form id="authForm" class="space-y-6" novalidate>
+                <!-- Toggle between signup/signin -->
+                <div class="flex space-x-1 bg-gray-100 rounded-lg p-1">
+                    <button type="button" id="signupTab" class="flex-1 py-2 px-4 rounded-md font-medium bg-white text-gray-700 shadow-sm">Sign Up</button>
+                    <button type="button" id="signinTab" class="flex-1 py-2 px-4 rounded-md font-medium text-gray-500">Sign In</button>
+                </div>
+
+                <!-- Name field (signup only) -->
+                <div id="nameField" class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="name" name="name" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="John Doe">
+                </div>
+
+                <!-- Email field -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="john@example.com">
+                </div>
+
+                <!-- Password field -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="••••••••">
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" id="submitBtn" 
+                        class="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black">
+                    Sign Up
+                </button>
+            </form>
+
+            <!-- Response area -->
+            <div id="response" class="mt-6 hidden">
+                <div class="bg-green-50 border border-green-200 rounded-md p-4">
+                    <div id="responseContent"></div>
+                    <div class="mt-3 text-sm">
+                        <strong>Your API Key:</strong> <span id="apiKey" class="font-mono bg-gray-100 px-2 py-1 rounded"></span>
+                        <button onclick="copyApiKey()" class="ml-2 text-blue-600 hover:underline">Copy</button>
+                    </div>
+                    <div class="mt-3">
+                        <button id="goToProfile" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            Go to Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error area -->
+            <div id="error" class="mt-6 hidden">
+                <div class="bg-red-50 border border-red-200 rounded-md p-4">
+                    <div id="errorContent" class="text-red-700"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-sm text-gray-500">
+            <p>© PixelForge API. All Rights Reserved.</p>
+        </footer>
+    </main>
+
+    <script>
+        const signupTab = document.getElementById('signupTab');
+        const signinTab = document.getElementById('signinTab');
+        const nameField = document.getElementById('nameField');
+        const nameInput = document.getElementById('name');
+        const submitBtn = document.getElementById('submitBtn');
+        const authForm = document.getElementById('authForm');
+        const response = document.getElementById('response');
+        const errorDiv = document.getElementById('error');
+        const goToProfileBtn = document.getElementById('goToProfile');
+
+        let isSignup = true;
+
+  
+        signupTab.addEventListener('click', () => {
+            isSignup = true;
+            signupTab.classList.add('bg-white', 'text-gray-700');
+            signupTab.classList.remove('text-gray-500');
+            signinTab.classList.remove('bg-white', 'text-gray-700');
+            signinTab.classList.add('text-gray-500');
+            nameField.classList.remove('hidden');
+            nameInput.required = true;
+            nameInput.ariaRequired = true;
+            submitBtn.textContent = 'Sign Up';
+        });
+
+        signinTab.addEventListener('click', () => {
+            isSignup = false;
+            signinTab.classList.add('bg-white', 'text-gray-700');
+            signinTab.classList.remove('text-gray-500');
+            signupTab.classList.remove('bg-white', 'text-gray-700');
+            signupTab.classList.add('text-gray-500');
+            nameField.classList.add('hidden');
+            nameInput.required = false;
+            nameInput.ariaRequired = false;
+            nameInput.value = ''; 
+            submitBtn.textContent = 'Sign In';
+        });
+
+     
+        goToProfileBtn.addEventListener('click', () => {
+            window.location.href = '/profile';
+        });
+
+
+
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessages();
+
+         
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const name = isSignup ? document.getElementById('name').value.trim() : '';
+
+            if (!email || !password) {
+                showError('Email and password are required');
+                return;
+            }
+
+            if (isSignup && !name) {
+                showError('Name is required for signup');
+                return;
+            }
+
+           
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+
+          
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters long');
+                return;
+            }
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+
+                const payload = {
+                    email: email,
+                    password: password
+                };
+                
+                if (isSignup) {
+                    payload.name = name;
+                }
+
+                const response = await fetch(`/auth/${isSignup ? 'signup' : 'signin'}`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', 
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                console.log('Auth response:', result);
+
+                if (result.error) {
+                    showError(result.error);
+                } else {
+                    showSuccess(result);
+                    
+                  
+                    localStorage.setItem('pixelForgeToken', result.result.token);
+                    localStorage.setItem('pixelForgeApiKey', result.result.apiKey);
+                    
+                 // eta 7 din er jonno cookie set korci en: i hhave seted user logedin cookie for 7 days
+                    const expires = new Date();
+                    expires.setTime(expires.getTime() + (7 * 24 * 60 * 60 * 1000));
+                    document.cookie = `token=${result.result.token}; expires=${expires.toUTCString()}; path=/; SameSite=Strict; Secure`;
+                    
+                    console.log('Token stored in cookie and localStorage'); 
+           
+                    setTimeout(() => {
+                        window.location.href = '/profile';
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Auth error:', err);
+                showError('Network error. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = isSignup ? 'Sign Up' : 'Sign In';
+            }
+        });
+
+        function showSuccess(result) {
+            response.classList.remove('hidden');
+            document.getElementById('responseContent').innerHTML = `
+                <div class="text-green-800 mb-2">✅ ${result.result.message}</div>
+                <div class="text-sm text-green-700">${result.result.user.name || 'User'} successfully ${isSignup ? 'registered' : 'logged in'}!</div>
+            `;
+            if (result.result.apiKey) {
+                document.getElementById('apiKey').textContent = result.result.apiKey;
+            }
+        }
+
+        function showError(message) {
+            errorDiv.classList.remove('hidden');
+            document.getElementById('errorContent').textContent = message;
+        }
+
+        function hideMessages() {
+            response.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+        }
+
+        function copyApiKey() {
+            const apiKey = document.getElementById('apiKey').textContent;
+            navigator.clipboard.writeText(apiKey).then(() => {
+                const original = document.getElementById('apiKey').textContent;
+                document.getElementById('apiKey').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('apiKey').textContent = original;
+                }, 2000);
+            });
+        }
+
+     
+        document.addEventListener('DOMContentLoaded', () => {
+     
+            nameField.classList.remove('hidden');
+            nameInput.required = true;
+            nameInput.ariaRequired = true;
+            
+         
+            const token = localStorage.getItem('pixelForgeToken');
+            if (token) {
+                console.log('Found token in localStorage, redirecting to profile');
+             
+                const cookies = document.cookie.split(';');
+                const hasTokenCookie = cookies.some(cookie => cookie.trim().startsWith('token='));
+                if (hasTokenCookie) {
+                    window.location.href = '/profile';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

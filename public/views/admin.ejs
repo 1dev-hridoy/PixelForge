@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-mono">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+            <a href="/admin/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</a>
+        </div>
+
+        <div class="mb-4 border-b border-gray-200">
+            <ul class="flex flex-wrap -mb-px" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                <li class="mr-2" role="presentation">
+                    <button class="inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2" id="pending-tab" data-tabs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">Pending Orders</button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button class="inline-block text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg py-4 px-4 text-sm font-medium text-center border-transparent border-b-2" id="premium-tab" data-tabs-target="#premium" type="button" role="tab" aria-controls="premium" aria-selected="false">Premium Users</button>
+                </li>
+            </ul>
+        </div>
+
+        <div id="myTabContent">
+            <div class="hidden" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sender Number</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Transaction ID</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order Date</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pendingOrders.forEach(order => { %>
+                                <tr id="order-<%= order._id %>">
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p class="text-gray-900 whitespace-no-wrap"><%= order.userId.name %></p>
+                                        <p class="text-gray-600 whitespace-no-wrap"><%= order.userId.email %></p>
+                                    </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p class="text-gray-900 whitespace-no-wrap"><%= order.senderNumber %></p>
+                                    </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p class="text-gray-900 whitespace-no-wrap"><%= order.transactionId %></p>
+                                    </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p class="text-gray-900 whitespace-no-wrap"><%= new Date(order.createdAt).toLocaleDateString() %></p>
+                                    </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
+                                        <button onclick="approveOrder('<%= order._id %>')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                            Approve
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="hidden" id="premium" role="tabpanel" aria-labelledby="premium-tab">
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">API Key</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% premiumUsers.forEach(user => { %>
+                                <tr id="user-<%= user._id %>">
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p class="text-gray-900 whitespace-no-wrap"><%= user.name %></p>
+                                        <p class="text-gray-600 whitespace-no-wrap"><%= user.email %></p>
+                                    </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p class="text-gray-900 whitespace-no-wrap"><%= user.apiKey %></p>
+                                    </td>
+                                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
+                                        <button onclick="renameApiKey('<%= user._id %>')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Rename API Key</button>
+                                        <button onclick="downgradeUser('<%= user._id %>')" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Downgrade to Free</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('[data-tabs-target]');
+            const tabContents = document.querySelectorAll('[role="tabpanel"]');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const target = document.querySelector(this.dataset.tabsTarget);
+
+                    tabContents.forEach(tc => {
+                        tc.classList.add('hidden');
+                    });
+                    target.classList.remove('hidden');
+
+                    tabs.forEach(t => {
+                        t.setAttribute('aria-selected', 'false');
+                        t.classList.remove('border-blue-500', 'text-blue-600');
+                        t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-600', 'hover:border-gray-300');
+                    });
+
+                    this.setAttribute('aria-selected', 'true');
+                    this.classList.add('border-blue-500', 'text-blue-600');
+                    this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-600', 'hover:border-gray-300');
+                });
+            });
+
+          
+            if (tabs.length > 0) {
+                tabs[0].click();
+            }
+        });
+
+        async function approveOrder(orderId) {
+            if (!confirm('Are you sure you want to approve this order?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/approve-order/${orderId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.error) {
+                    alert('Error approving order: ' + result.error);
+                } else {
+                    alert(result.message);
+                    document.getElementById(`order-${orderId}`).remove();
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        async function renameApiKey(userId) {
+            const newApiKey = prompt('Enter the new API key for the user:');
+            if (!newApiKey || newApiKey.trim() === '') {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/user/rename-apikey/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newApiKey: newApiKey.trim() })
+                });
+                const result = await response.json();
+                if (result.error) {
+                    alert('Error renaming user API key: ' + result.error);
+                } else {
+                    alert(result.message);
+                    location.reload(); 
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        async function downgradeUser(userId) {
+            if (!confirm('Are you sure you want to downgrade this user to a free account?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/user/downgrade/${userId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.error) {
+                    alert('Error downgrading user: ' + result.error);
+                } else {
+                    alert(result.message);
+                    document.getElementById(`user-${userId}`).remove();
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

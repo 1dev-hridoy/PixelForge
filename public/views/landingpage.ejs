@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= settings.service.name %> - <%= settings.service.slogan %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'JetBrains Mono', monospace; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+    <!-- Simple header with minimal styling -->
+    <header class="bg-white border-b border-gray-200">
+        <nav class="max-w-4xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gray-800 text-white rounded flex items-center justify-center">
+                        <span class="text-sm font-bold"><%= settings.service.name.charAt(0) %></span>
+                    </div>
+                    <span class="font-bold text-lg"><%= settings.service.name %></span>
+                    <span class="text-sm text-gray-500"><%= settings.service.slogan %></span>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <button id="menuToggle" class="p-2">
+                        <i class="fas fa-bars text-gray-600"></i>
+                    </button>
+                    <button id="menuClose" class="p-2 hidden">
+                        <i class="fas fa-times text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobileMenu" class="hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="#" class="flex items-center space-x-2 text-gray-800">
+                        <i class="fas fa-list"></i>
+                        <span>Scrape List</span>
+                    </a>
+                    <a href="/doc" class="flex items-center space-x-2 text-gray-800">
+                        <i class="fas fa-code"></i>
+                        <span>API</span>
+                    </a>
+                    <a href="/profile" class="flex items-center space-x-2 text-gray-800">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="<%= settings.contactURI %>" class="flex items-center space-x-2 text-gray-800">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Minimal hero section with clean typography -->
+    <main class="max-w-4xl mx-auto px-6 py-16">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                Design & Code<br>
+                in Perfect Harmony.
+            </h1>
+            <p class="text-gray-600 max-w-2xl mx-auto"><%= settings.service.description %></p>
+        </div>
+
+        <!-- Simple action buttons with subtle styling -->
+        <div class="space-y-4 mb-16">
+            <a href="/doc" class="w-full bg-gray-800 text-white py-3 px-6 flex items-center justify-between">
+                <span class="flex items-center">
+                    <i class="fas fa-code mr-3"></i>
+                    View API Docs
+                </span>
+            </a>
+            
+            <a href="<%= settings.contactURI %>" target="_blank" class="w-full bg-gray-200 text-gray-800 py-3 px-6 flex items-center justify-between">
+                <span class="flex items-center">
+                    <i class="fas fa-envelope mr-3"></i>
+                    Get In Touch
+                </span>
+            </a>
+        </div>
+
+        <!-- Clean about section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-6">Our Creative Team.</h2>
+               <p class="text-gray-600 leading-relaxed mb-8">
+                Meet the minds behind PixelForge. We blend design thinking with technical expertise 
+                to create digital products that stand out.
+            </p>
+            <!-- Minimal team member cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <% settings.contributors.forEach(contributor => { %>
+                <a href="https://github.com/<%= contributor.username %>" target="_blank" class="block p-4 bg-white rounded-lg border border-gray-200 hover:shadow-lg hover:border-blue-500 transition-all">
+                    <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-3 overflow-hidden">
+                        <% if (contributor.imageUrl) { %>
+                            <img src="<%= contributor.imageUrl %>" alt="<%= contributor.name %>" class="w-full h-full object-cover">
+                        <% } else { %>
+                            <span class="text-gray-800 font-bold text-xl"><%= contributor.name.charAt(0) %></span>
+                        <% } %>
+                    </div>
+                    <h3 class="font-bold"><%= contributor.name %></h3>
+                    <p class="text-sm text-gray-500 mb-2">@<%= contributor.username %></p>
+                    <p class="text-xs text-gray-500"><%= contributor.role %></p>
+                </a>
+                <% }); %>
+            </div>
+        </section>
+
+        <!-- Services section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-6">What We Do.</h2>
+            <div class="space-y-4">
+                <div class="p-4 bg-white rounded-lg border border-gray-200">
+                    <div class="flex items-start">
+                        <div class="mr-4">
+                            <i class="fas fa-laptop-code text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">Web Development</h3>
+                            <p class="text-sm text-gray-600">Clean, efficient code for modern web applications</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-white rounded-lg border border-gray-200">
+                    <div class="flex items-start">
+                        <div class="mr-4">
+                            <i class="fas fa-mobile-alt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">UI/UX Design</h3>
+                            <p class="text-sm text-gray-600">Intuitive interfaces that users love to interact with</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-white rounded-lg border border-gray-200">
+                    <div class="flex items-start">
+                        <div class="mr-4">
+                            <i class="fas fa-bullhorn text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">Digital Strategy</h3>
+                            <p class="text-sm text-gray-600">Comprehensive plans for your digital presence</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+       
+
+       
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+            document.getElementById('menuToggle').classList.add('hidden');
+            document.getElementById('menuClose').classList.remove('hidden');
+        });
+
+        document.getElementById('menuClose').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+            document.getElementById('menuToggle').classList.remove('hidden');
+            document.getElementById('menuClose').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

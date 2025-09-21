@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= settings.service.name %> - Upgrade to Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['Ubuntu Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-mono text-gray-800 min-h-screen">
+    <!-- Main Content -->
+    <main class="max-w-2xl mx-auto px-6 py-12">
+        <!-- Logo and Title -->
+        <div class="text-center mb-12">
+            <div class="w-16 h-16 bg-black text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4">
+                <%= settings.service.name.charAt(0).toUpperCase() %>
+            </div>
+            <h2 class="text-3xl font-bold mb-2">Upgrade Your API Service</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Complete your payment to upgrade to the Premium plan and unlock all features.</p>
+        </div>
+
+        <!-- Payment Details Card -->
+        <div class="bg-white border border-gray-300 rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Payment Details</h3>
+            
+            <div class="space-y-4 mb-6">
+                <div class="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span class="text-gray-600">Payment Method</span>
+                    <span class="font-bold"><%= settings.upgradeKEY.type %></span>
+                </div>
+                <div class="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span class="text-gray-600">Method Name</span>
+                    <span class="font-bold"><%= settings.upgradeKEY.methodName %></span>
+                </div>
+                <div class="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span class="text-gray-600">Amount</span>
+                    <span class="font-bold text-lg">$<%= settings.procingPlan.premium.price %></span>
+                </div>
+                
+                <div class="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span class="text-gray-600">Account Number</span>
+                    <div class="flex items-center">
+                        <span class="font-bold mr-2"><%= settings.upgradeKEY.number %></span>
+                        <button onclick="copyKey()" class="p-1 hover:bg-gray-100 rounded">
+                            <span class="material-icons text-gray-500 text-sm">content_copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-bold mb-2">Payment Instructions</h4>
+                <p class="text-sm text-gray-600"><%= settings.upgradeKEY.instructions %></p>
+            </div>
+        </div>
+
+        <!-- Payment Verification Form -->
+        <div class="bg-white border border-gray-300 rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Payment Verification</h3>
+            <p class="text-gray-600 mb-6">Please enter your payment details below to verify your transaction and complete the upgrade.</p>
+            
+            <form onsubmit="handleSubmit(event)">
+                <div class="mb-6">
+                    <label for="senderNumber" class="block text-sm font-bold mb-2">Sender Account Number</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-3 text-gray-400">account_balance</span>
+                        <input type="text" id="senderNumber" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-black" 
+                               placeholder="Enter your account number" required>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Enter the bank account number used for the payment</p>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="transactionId" class="block text-sm font-bold mb-2">Transaction ID</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-3 text-gray-400">receipt</span>
+                        <input type="text" id="transactionId" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-black" 
+                               placeholder="Enter transaction ID" required>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Enter the transaction ID from your payment receipt</p>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" class="mr-2 mt-1" required>
+                        <span class="text-sm">I confirm that I have made the payment of $<%= settings.procingPlan.premium.price %> and the information provided is accurate.</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="w-full bg-black text-white py-3 rounded font-bold hover:bg-gray-800 transition-colors">
+                    Submit Payment Verification
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-sm text-gray-500 pt-8 border-t border-gray-200">
+            <p>© <%= settings.service.name %>. | All Rights Reserved.</p>
+        </footer>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 text-green-600 flex items-center justify-center rounded-full mx-auto mb-4">
+                    <span class="material-icons text-3xl">check_circle</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Payment Submitted!</h3>
+                <p class="text-gray-600 mb-6">Your payment verification has been submitted. Your account will be upgraded to Premium after admin approval.</p>
+                <button onclick="closeModal()" class="bg-black text-white py-2 px-6 rounded font-bold hover:bg-gray-800 transition-colors">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded shadow-lg transform translate-y-20 transition-transform duration-300">
+        <div class="flex items-center">
+            <span class="material-icons mr-2">check_circle</span>
+            <span id="toastMessage">Action completed successfully!</span>
+        </div>
+    </div>
+
+    <script>
+        function copyKey() {
+            const key = "<%= settings.upgradeKEY.number %>";
+            navigator.clipboard.writeText(key).then(() => {
+                showToast('Account number copied to clipboard!');
+            }).catch(err => {
+                showToast('Failed to copy account number');
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20');
+            }, 3000);
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const senderNumber = document.getElementById('senderNumber').value;
+            const transactionId = document.getElementById('transactionId').value;
+            
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Submitting...';
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/submit-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ senderNumber, transactionId })
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    showToast(result.error);
+                } else {
+                    document.getElementById('successModal').classList.remove('hidden');
+                    event.target.reset();
+                }
+            } catch (error) {
+                showToast('An error occurred. Please try again.');
+            } finally {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            window.location.href = '/profile';
+        }
+    </script>
+</body>
+</html>

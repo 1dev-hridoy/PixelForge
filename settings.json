@@ -1,0 +1,77 @@
+{
+  "service": {
+    "name": "PixelForge",
+    "slogan": "Making Life Easier",
+    "description": "This service helps you manage your tasks efficiently and effortlessly.",
+    "headDoc": "Welcome to the PixelForge API Documentation",
+    "ownerName": "Mohammed Hridoy",
+    "serverURI": "http://localhost:3000"
+  },
+  "buttons": [
+    {
+      "name": "Home",
+      "url": "https://myawesomeservice.com/"
+    },
+    {
+      "name": "Dashboard",
+      "url": "https://myawesomeservice.com/dashboard"
+    },
+    {
+      "name": "Support",
+      "url": "https://myawesomeservice.com/support"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Mohammed Hridoy",
+      "imageUrl": "https://github.com/1dev-hridoy.png",
+      "username": "1dev-hridoy",
+      "role": "Frontend Developer"
+    }
+  ],
+
+  "apiPrefix": "PF_",
+  "contactURI": "https://t.me/@BD_NOOBRAT",
+
+  "procingPlan": {
+    "free": {
+      "id": "1",
+      "price": 0,
+      "features": [
+        "Basic Task Management",
+        "Limited Storage (5GB)",
+        "Community Support"
+      ]
+    },
+    "premium": {
+        "id": "2",
+      "price": 100,
+      "features": [
+        "Advanced Task Management",
+        "Increased Storage (100GB)",
+        "Priority Support",
+        "Customizable Themes"
+      ]
+    }
+  },
+  "rateLimit": {
+    "free": {
+      "requestsPerMinute": 100,
+      "requestsPerDay": 3000
+    },
+    "premium": {
+      "requestsPerMinute": 120,
+      "requestsPerDay": 5000
+    }
+
+  },
+
+  "upgradeKEY": {
+    "type": "mobileBanking",
+    "methodName": "bKash",
+    "amaount": "500",
+    "number": "+8801700000000",
+    "instructions": "Send the payment and email us the transaction ID to upgrade your account."
+  }
+}
+
