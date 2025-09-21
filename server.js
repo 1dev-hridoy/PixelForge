@@ -43,6 +43,8 @@ app.use(cookieParser());
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
+app.set('trust proxy', 1); 
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'a-secret-key-that-is-long-and-secret',
     resave: false,
