@@ -38,12 +38,22 @@ if (process.env.VERCEL !== '1') {
 
 
 app.use(cors());
+app.use(cors());
 app.use(cookieParser());
-app.use(require('express-session')({
+
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
+app.use(session({
     secret: process.env.SESSION_SECRET || 'a-secret-key-that-is-long-and-secret',
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production' } 
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 
+    }
 }));
 app.use(require('./middleware/logger'));
 app.use(express.json());
