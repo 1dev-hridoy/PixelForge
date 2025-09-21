@@ -237,9 +237,11 @@
                     <i class="fas fa-edit mr-2"></i>Edit Profile
                 </button>
                 <% if (user.accountType === 'free') { %>
-                <button onclick="upgradePlan()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded font-bold hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center">
+                <a href="/order-premium">
+                    <button onclick="upgradePlan()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded font-bold hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center">
                     <i class="fas fa-crown mr-2"></i>Upgrade to Premium
                 </button>
+                </a>
                 <% } else { %>
                 <button class="w-full bg-green-100 text-green-800 py-3 rounded font-bold flex items-center justify-center">
                     <i class="fas fa-check-circle mr-2"></i>Premium Member
@@ -369,7 +371,7 @@
 
 
 
-        
+
         function copyApiKey() {
             const apiKey = document.getElementById('apiKeyDisplay').textContent;
             navigator.clipboard.writeText(apiKey).then(() => {
@@ -404,47 +406,51 @@
             }
         }
 
-        async function regenerateApiKey() {
-            if (!confirm('⚠️ Are you sure you want to regenerate your API key?\n\nThis will invalidate ALL existing keys and you\'ll need to update your applications immediately.')) {
-                return;
-            }
+        //===========================================
+        //--------------------ctrl + r removed-------
+        //===========================================
 
-            try {
-                showToast('Regenerating API key...', 'info');
+        // async function regenerateApiKey() {
+        //     if (!confirm('⚠️ Are you sure you want to regenerate your API key?\n\nThis will invalidate ALL existing keys and you\'ll need to update your applications immediately.')) {
+        //         return;
+        //     }
+
+        //     try {
+        //         showToast('Regenerating API key...', 'info');
                 
-                const token = localStorage.getItem('pixelForgeToken');
-                if (!token) {
-                    showToast('Authentication required. Please sign in again.', 'error');
-                    window.location.href = '/auth';
-                    return;
-                }
+        //         const token = localStorage.getItem('pixelForgeToken');
+        //         if (!token) {
+        //             showToast('Authentication required. Please sign in again.', 'error');
+        //             window.location.href = '/auth';
+        //             return;
+        //         }
 
-                const response = await fetch('/api/user/regenerate-key', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    credentials: 'include'
-                });
+        //         const response = await fetch('/api/user/regenerate-key', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'Authorization': `Bearer ${token}`
+        //             },
+        //             credentials: 'include'
+        //         });
 
-                const result = await response.json();
+        //         const result = await response.json();
 
-                if (result.error) {
-                    showToast('Failed to regenerate API key: ' + result.error, 'error');
-                } else {
-                    localStorage.setItem('pixelForgeApiKey', result.result.apiKey);
-                    document.getElementById('newApiKey').textContent = result.result.apiKey;
-                    document.getElementById('apiKeyModal').classList.remove('hidden');
-                    currentUser.apiKey = result.result.apiKey;
-                    document.getElementById('apiKeyDisplay').textContent = result.result.apiKey;
-                    showToast('New API key generated successfully!', 'success');
-                }
-            } catch (error) {
-                console.error('Regenerate error:', error);
-                showToast('Failed to regenerate API key. Please try again.', 'error');
-            }
-        }
+        //         if (result.error) {
+        //             showToast('Failed to regenerate API key: ' + result.error, 'error');
+        //         } else {
+        //             localStorage.setItem('pixelForgeApiKey', result.result.apiKey);
+        //             document.getElementById('newApiKey').textContent = result.result.apiKey;
+        //             document.getElementById('apiKeyModal').classList.remove('hidden');
+        //             currentUser.apiKey = result.result.apiKey;
+        //             document.getElementById('apiKeyDisplay').textContent = result.result.apiKey;
+        //             showToast('New API key generated successfully!', 'success');
+        //         }
+        //     } catch (error) {
+        //         console.error('Regenerate error:', error);
+        //         showToast('Failed to regenerate API key. Please try again.', 'error');
+        //     }
+        // }
 
   
         function showToast(message, type = 'success') {
