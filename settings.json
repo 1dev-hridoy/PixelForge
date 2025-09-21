@@ -5,7 +5,7 @@
     "description": "This service helps you manage your tasks efficiently and effortlessly.",
     "headDoc": "Welcome to the PixelForge API Documentation",
     "ownerName": "Mohammed Hridoy",
-    "serverURI": "http://localhost:3000"
+    "serverURI": "https://pixelforge-api.vercel.app"
   },
   "buttons": [
     {
