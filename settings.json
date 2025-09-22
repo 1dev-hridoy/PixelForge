@@ -10,15 +10,15 @@
   "buttons": [
     {
       "name": "Home",
-      "url": "https://myawesomeservice.com/"
+      "url": "/"
     },
     {
       "name": "Dashboard",
-      "url": "https://myawesomeservice.com/dashboard"
+      "url": "/profile"
     },
     {
       "name": "Support",
-      "url": "https://myawesomeservice.com/support"
+      "url": "https://t.me/nexalo"
     }
   ],
   "contributors": [
@@ -31,7 +31,7 @@
   ],
 
   "apiPrefix": "PF_",
-  "contactURI": "https://t.me/@BD_NOOBRAT",
+  "contactURI": "https://t.me/BD_NOOBRA",
 
   "procingPlan": {
     "free": {
@@ -57,7 +57,7 @@
   "rateLimit": {
     "free": {
       "requestsPerMinute": 100,
-      "requestsPerDay": 5111
+      "requestsPerDay": 5
     },
     "premium": {
       "requestsPerMinute": 120,
