@@ -353,10 +353,10 @@
                 const response = await fetch(url, options);
                 const data = await response.json();
                 responseContainer.innerHTML = `
-                    <div class="text-gray-400 mb-2">Method: ${options.method}</div>
-                    <div class="text-gray-400 mb-2">URL: ${url}</div>
+                    <div class="text-gray-400 mb-2 whitespace-pre-wrap break-all">Method: ${options.method}</div>
+                    <div class="text-gray-400 mb-2 break-all">URL: ${url}</div>
                     <div class="text-gray-400 mb-4">Response</div>
-                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <pre class="whitespace-pre-wrap break-all">${JSON.stringify(data, null, 2)}</pre>
                 `;
             } catch (error) {
                 responseContainer.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
