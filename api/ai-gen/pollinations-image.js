@@ -40,13 +40,6 @@ const handler = async (req, res, meta) => {
             });
         }
 
-    
-        const tempDir = path.join(__dirname, 'temp');
-        if (!fs.existsSync(tempDir)) {
-            fs.mkdirSync(tempDir, { recursive: true });
-        }
-
-
 
         // below is ai api parameters u can cng
         const width = 1024;
@@ -57,25 +50,20 @@ const handler = async (req, res, meta) => {
         // ai main api
         const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=true`;
         
-     
+      
         const response = await fetch(imageUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const buffer = await response.buffer();
-        
-      
-        
 
         const timestamp = Date.now();
         const filename = `pollinations_${timestamp}.png`;
-        const filePath = path.join(tempDir, filename);
-        fs.writeFileSync(filePath, buffer);
 
-      
+    
         const form = new FormData();
-        form.append('file', fs.createReadStream(filePath));
+        form.append('file', buffer, { filename });
 
         const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
             method: 'POST',
@@ -84,10 +72,7 @@ const handler = async (req, res, meta) => {
 
         const uploadData = await uploadResponse.json();
         
-     
-        fs.unlinkSync(filePath);
-
-    
+  
         const fileId = uploadData.data.url.split('/')[3];
         const dlUrl = `https://tmpfiles.org/dl/${fileId}/${filename}`;
 
