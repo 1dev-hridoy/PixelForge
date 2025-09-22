@@ -220,7 +220,7 @@
                 const categoryHtml = `
                     <div class="cursor-pointer hover:bg-gray-100 p-2 rounded" onclick="renderEndpoints('${category}')">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-sm">${category}</span>
+                            <span class="font-bold text-sm">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
                             <span class="text-xs bg-gray-200 px-2 py-1 rounded">${count}</span>
                         </div>
                     </div>
@@ -244,7 +244,7 @@
                 return;
             }
 
-            let contentHtml = `<div id="${category}-content" class="p-4"><h2 class="text-xl font-bold mb-4">${category} Endpoints</h2>`;
+            let contentHtml = `<div id="${category}-content" class="p-4"><h2 class="text-xl font-bold mb-4">${category.charAt(0).toUpperCase() + category.slice(1)} Endpoints</h2>`;
 
             filteredApis.forEach(api => {
                 const endpointId = api.meta.path.replace(/\//g, '-');
