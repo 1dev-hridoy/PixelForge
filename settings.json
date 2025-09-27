@@ -57,7 +57,7 @@
   "rateLimit": {
     "free": {
       "requestsPerMinute": 100,
-      "requestsPerDay": 5
+      "requestsPerDay": 2000
     },
     "premium": {
       "requestsPerMinute": 120,
